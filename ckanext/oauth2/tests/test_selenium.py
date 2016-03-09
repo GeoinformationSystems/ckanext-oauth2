@@ -45,10 +45,15 @@ class IntegrationTest(unittest.TestCase):
         cls._process.terminate()
 
     def setUp(self):
-        self.driver = webdriver.Firefox()
+        if 'WEB_DRIVER_URL' in os.environ and 'CKAN_SERVER_URL' in os.environ:
+            self.driver = webdriver.Remote(os.environ['WEB_DRIVER_URL'], webdriver.DesiredCapabilities.FIREFOX.copy())
+            self.base_url = os.environ['CKAN_SERVER_URL']
+        else:
+            self.driver = webdriver.Firefox()
+            self.base_url = 'http://127.0.0.1:5000/'
+
         self.driver.implicitly_wait(5)
         self.driver.set_window_size(1024, 768)
-        self.base_url = "http://localhost:5000/"
         self.verificationErrors = []
         self.accept_next_alert = True
 
